@@ -18,19 +18,20 @@ A library for p5.js which adds support for interacting with ComfyUI, using its A
 ## Prerequisites
 
 * Working [ComfyUI](https://github.com/comfyanonymous/ComfyUI) installation (tested with v0.2.4)
-* _ComfyUI Nodes for External Tooling_ (available to install via the ComfyUI Manager, or [manually](https://github.com/Acly/comfyui-tooling-nodes?tab=readme-ov-file#installation))
+* _comfyui-tooling-nodes_ (available to install via the ComfyUI Manager, or [manually](https://github.com/Acly/comfyui-tooling-nodes?tab=readme-ov-file#installation))
 * If you're planning on accessing ComfyUI remotely: ```--listen 0.0.0.0 --enable-cors-header```
 * If your website will run on HTTPS (e.g. in the p5.js Web Editor): you'll need to provision a certificate, and load it into ComfyUI with ```--tls-keyfile privkey.pem --tls-certfile fullchain.pem```
 * Enable _Dev Mode_ in ComfyUI's setting (via the cog icon on the website), for the "Save (API format)" button to show.
 
 ## Getting started
 
-Download the [library file](https://github.com/gohai/p5.comfyui-helper/blob/main/libraries/p5.comfyui-helper.js) and include it in the `head` section of your HTML:
-
+Include the following line in the `head` section of your HTML:
 ```
 <script src="https://unpkg.com/@gohai/p5.comfyui-helper@^1/libraries/p5.comfyui-helper.js"></script>
 ```
-or
+
+or, download and use a local copy of the [library file](https://github.com/gohai/p5.comfyui-helper/blob/main/libraries/p5.comfyui-helper.js) like so:
+
 ```
 <script src="p5.comfyui-helper.js"></script>
 ```
