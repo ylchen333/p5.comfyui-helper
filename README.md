@@ -11,16 +11,28 @@ A library for p5.js which adds support for interacting with ComfyUI, using its A
 
 ## Reference
 
+- [Demo](#demo)
 - [Prerequisites](#prerequisites)
+- [Setup](#setup)
 - [Getting started](#getting-started)
 - [Examples](examples/)
 
+## Demo
+
+[Demo video](https://drive.google.com/file/d/1PmOk6OqwHU_6oGd50JQBHdjLdV_oLrdt/view?usp=sharing)
+
 ## Prerequisites
 
-* Working [ComfyUI](https://github.com/comfyanonymous/ComfyUI) installation (tested with v0.2.4)
-* _comfyui-tooling-nodes_ (available to install via the ComfyUI Manager, or [manually](https://github.com/Acly/comfyui-tooling-nodes?tab=readme-ov-file#installation))
-* If you're planning on accessing ComfyUI remotely: ```--listen 0.0.0.0 --enable-cors-header```
-* If your website will run on HTTPS (e.g. in the p5.js Web Editor): you'll need to provision a certificate, and load it into ComfyUI with ```--tls-keyfile privkey.pem --tls-certfile fullchain.pem```
+* [ComfyUI](https://github.com/comfyanonymous/ComfyUI) (tested with v0.2.4)
+* If you are running your own ComfyUI installation:
+    * Make sure to start Comfy with the following arguments: ```--listen 0.0.0.0 --enable-cors-header```
+    * If the site you will be accessing Comfy from uses HTTPS, you will need to provision a certificate, and load it into ComfyUI with ```--tls-keyfile privkey.pem --tls-certfile fullchain.pem```. This is needed if you want to make use of the p5.js web editor.
+
+## Setup
+
+[Setup video](https://drive.google.com/file/d/16InuWI4nJpyUtFGbS6dUBLVXZadqM_OS/view?usp=drive_link)
+
+* Install _comfyui-tooling-nodes_ (available to install via the ComfyUI Manager, or [manually](https://github.com/Acly/comfyui-tooling-nodes?tab=readme-ov-file#installation))
 * Enable _Dev Mode_ in ComfyUI's setting (via the cog icon on the website), for the "Save (API format)" button to show.
 
 ## Getting started
