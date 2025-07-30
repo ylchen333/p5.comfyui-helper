@@ -17,6 +17,9 @@ class ComfyUiP5Helper {
   setup_websocket() {
     this.ws = new WebSocket(this.base_url + "/ws");
     this.ws.addEventListener("message", this.websocket_on_message.bind(this));
+    this.ws.addEventListener("error", this.websocket_on_error.bind(this));
+    this.ws.addEventListener("close", this.websocket_on_close.bind(this));
+    this.sid = null;  // invalidate for reconnection
   }
 
   websocket_on_message(event) {
@@ -71,6 +74,18 @@ class ComfyUiP5Helper {
         });
       }
     }
+  }
+
+  websocket_on_error(event) {
+    console.warn(event);
+    this.ws.close();
+  }
+
+  websocket_on_close(event) {
+    setTimeout(() => {
+      console.log("Reconnecting to " + this.base_url);
+      this.setup_websocket();
+    }, 1000);
   }
 
   replace_saveimage_with_websocket(workflow) {
