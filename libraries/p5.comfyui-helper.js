@@ -5,13 +5,16 @@
  * https://github.com/gohai/p5.comfyui-helper
  */
 
-'use strict';
+"use strict";
 
 class ComfyUiP5Helper {
   constructor(base_url) {
     this.base_url = base_url.replace(/\/$/, ""); // strip any trailing slash
     this.setup_websocket();
     this.outputs = [];
+
+    this.running_prompts = {};
+    this.running_uploads = {};
   }
 
   setup_websocket() {
@@ -19,10 +22,10 @@ class ComfyUiP5Helper {
     this.ws.addEventListener("message", this.websocket_on_message.bind(this));
     this.ws.addEventListener("error", this.websocket_on_error.bind(this));
     this.ws.addEventListener("close", this.websocket_on_close.bind(this));
-    this.sid = null;  // invalidate for reconnection
+    this.sid = null; // invalidate for reconnection
   }
 
-  websocket_on_message(event) {
+  async websocket_on_message(event) {
     if (typeof event.data == "string") {
       const data = JSON.parse(event.data);
       if (data.type == "status") {
@@ -38,14 +41,21 @@ class ComfyUiP5Helper {
         // this is being sent periodically during processing
         this.current_prompt = data.data.prompt_id;
         this.current_node = data.data.node;
+
+        // if there's a status callback set up for the current prompt, run it
+        if (this.running_prompts?.[this.current_prompt]?.status_callback) {
+          this.running_prompts[this.current_prompt].status_callback(data.data);
+        }
       } else if (data.type == "execution_success") {
         if (data.data.prompt_id == this.prompt_id) {
           //console.log("Execution finished");
+          await this.get_outputs_from_history(this.prompt_id);
           if (this.callback) {
             this.callback(this.outputs);
           }
           this.resolve(this.outputs);
           this.outputs = [];
+          delete this.running_prompts[this.current_prompt];
         }
       } else if (data.type == "execution_interrupted") {
         console.warn("Execution was interrupted");
@@ -88,25 +98,56 @@ class ComfyUiP5Helper {
     }, 1000);
   }
 
-  replace_saveimage_with_websocket(workflow) {
-    for (let key in workflow) {
-      if (workflow[key].class_type == "SaveImage") {
-        workflow[key].class_type = "SaveImageWebsocket";
+  async get_outputs_from_history(prompt_id) {
+    try {
+      let res = await fetch(this.base_url + "/history/" + prompt_id);
+      let history = await res.json();
+
+      history = history[prompt_id];
+
+      // flatten resulting images and only use the ones of type 'output':
+      let image_outputs = Object.entries(history.outputs)
+        .filter(([key, value]) => value?.images?.length > 0)
+        .reduce((acc, [key, value]) => {
+          acc[key] = value.images.filter((d) => d.type === "output");
+          return acc;
+        }, {});
+
+      for (const [node_number, images] of Object.entries(image_outputs)) {
+        for (const image of images) {
+          const img_encoded = new URLSearchParams(image);
+          const blob_url =
+            this.base_url + "/view?" + encodeURI(img_encoded.toString());
+
+          this.outputs.push({
+            node: parseInt(node_number),
+            src: blob_url,
+          });
+        }
       }
+    } catch (e) {
+      console.warn(e);
+      throw e;
     }
   }
 
-  async run(workflow, callback) {
-    this.replace_saveimage_with_websocket(workflow);
+  async run(workflow, callback, status_callback) {
+    // stall while we're waiting for the Comfy connection being set up
+    // as well as images being uploaded:
+    const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+    while (!this.sid || Object.values(this.running_uploads).length > 0) {
+      await delay(100);
+    }
+
     this.callback = callback;
-    this.prompt_id = await this.prompt(workflow);
+    this.prompt_id = await this.prompt(workflow, status_callback);
     return new Promise((resolve, reject) => {
       this.resolve = resolve;
       this.reject = reject;
     });
   }
 
-  async prompt(workflow) {
+  async prompt(workflow, status_callback) {
     let options = {
       method: "POST",
       body: JSON.stringify({ prompt: workflow, client_id: this.sid }),
@@ -133,6 +174,9 @@ class ComfyUiP5Helper {
           throw "Status " + res.status;
         }
       }
+
+      this.running_prompts[data.prompt_id] = { status_callback };
+
       return data.prompt_id;
     } catch (e) {
       console.warn(e);
@@ -140,43 +184,61 @@ class ComfyUiP5Helper {
     }
   }
 
-  image(img) {
-    let data_url;
-    if (img.loadPixels) {
-      img.loadPixels();
-      data_url = img.canvas.toDataURL();
-    } else {
-      throw "image() is currently only implemented for p5 images";
-    }
+  upload_canvas(canvas, filename) {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          const formData = new FormData();
+          formData.append("image", blob, filename);
+          formData.append("type", "input");
 
-    return {
-      inputs: {
-        image: data_url.split("base64,")[1],
-      },
-      class_type: "ETN_LoadImageBase64",
-      _meta: {
-        title: "Load Image (Base64)",
-      },
-    };
+          let options = {
+            method: "POST",
+            body: formData,
+            redirect: "follow",
+          };
+
+          fetch(this.base_url + "/upload/image", options)
+            .then((res) => res.json())
+            .then((json) => {
+              // console.log("Upload response:", json);
+              resolve(json.name);
+            })
+            .catch((err) => {
+              console.warn("Upload failed:", err);
+              reject(err);
+            });
+        },
+        "image/jpeg",
+        0.95
+      );
+    });
   }
 
-  mask(img) {
-    let data_url;
+  image(img) {
+    let filename;
     if (img.loadPixels) {
       img.loadPixels();
-      data_url = img.canvas.toDataURL();
-    } else {
-      throw "mask() is currently only implemented for p5 images";
-    }
+      let canvas = img.canvas;
 
-    return {
-      inputs: {
-        image: data_url.split("base64,")[1],
-      },
-      class_type: "ETN_LoadMaskBase64",
-      _meta: {
-        title: "Load Mask (Base64)",
-      },
-    };
+      // generate a random filename:
+      filename = "p5.comfyui-helper-";
+      if (crypto) {
+        filename += crypto.randomUUID();
+      } else {
+        filename += Math.random().toString(36).substring(2);
+      }
+      filename += ".jpg";
+
+      // start upload:
+      this.running_uploads[filename] = true;
+      this.upload_canvas(canvas, filename).finally(() => {
+        delete this.running_uploads[filename];
+      });
+
+      return filename;
+    } else {
+      throw "image() is currently only implemented for p5 Graphics/Renderer/Image objects";
+    }
   }
 }
