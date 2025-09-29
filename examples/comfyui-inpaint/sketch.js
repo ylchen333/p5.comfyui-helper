@@ -17,7 +17,11 @@ function setup() {
   pixelDensity(1);
   srcImg = createGraphics(width, height);
 
-  comfy = new ComfyUiP5Helper("https://your.comfyui.instance:8188");
+     // https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/837eb0c1-c4f9-412a-befa-3921d368c130
+  server_id = "837eb0c1-c4f9-412a-befa-3921d368c130";
+  comfy_url = "https://" + server_id + "-comfyui.runcomfy.com";
+  console.log("comfy url is " + comfy_url);
+  comfy = new ComfyUiP5Helper(comfy_url); 
   console.log("workflow is", workflow);
 
   let button = createButton("start generating");

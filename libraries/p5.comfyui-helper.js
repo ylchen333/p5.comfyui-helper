@@ -3,22 +3,64 @@
  * (c) Gottfried Haider 2024
  * LGPL
  * https://github.com/gohai/p5.comfyui-helper
+ * 
+ * 
+ * edited by Lorie Chen for Golan Levin's 60-212 Creative Coding course at CMU
+ * written in collab with ChatGPT
  */
 
 "use strict";
 
+// at top of file:
+console.log("[helper] loaded", new Date().toISOString());
+
+// Decide if a text response looks like HTML
+function _looksLikeHtml(text) {
+  const head = (text || "").trim().slice(0, 32).toLowerCase();
+  return head.startsWith("<!doctype") || head.startsWith("<html");
+}
+
 class ComfyUiP5Helper {
   constructor(base_url) {
-    this.base_url = base_url.replace(/\/$/, ""); // strip any trailing slash
+    this.base_url = base_url.replace(/\/$/, "");
+    this.apiPrefix = "";           // "", or "/api" after detection
+    this.apiReady = this._detectApiPrefix();  // start detection ASAP
+
     this.setup_websocket();
     this.outputs = [];
-
     this.running_prompts = {};
     this.running_uploads = {};
+    console.log("[helper] base_url =", this.base_url);
   }
 
+  _url(path) {                     // build full HTTP URL
+    return this.base_url + this.apiPrefix + path;
+  }
+
+  async _detectApiPrefix() {
+    // Try /object_info first (no prefix)
+    try {
+      const r1 = await fetch(this.base_url + "/object_info");
+      const t1 = await r1.text();
+      if (r1.ok && !_looksLikeHtml(t1)) { this.apiPrefix = ""; return; }
+    } catch {}
+    // Fall back to /api/object_info
+    try {
+      const r2 = await fetch(this.base_url + "/api/object_info");
+      const t2 = await r2.text();
+      if (r2.ok && !_looksLikeHtml(t2)) { this.apiPrefix = "/api"; return; }
+    } catch {}
+    // If both fail, keep "" and let normal error handling surface details
+    console.warn("[helper] Could not auto-detect API prefix; proceeding without it");
+}
+
   setup_websocket() {
-    this.ws = new WebSocket(this.base_url + "/ws");
+    const url = new URL(this.base_url);  // e.g. https://host
+    const wsProto = url.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${wsProto}//${url.host}/ws`;   // wss://host/ws
+    this.ws = new WebSocket(wsUrl);
+    
+    // this.ws = new WebSocket(this.base_url + "/ws");
     this.ws.addEventListener("message", this.websocket_on_message.bind(this));
     this.ws.addEventListener("error", this.websocket_on_error.bind(this));
     this.ws.addEventListener("close", this.websocket_on_close.bind(this));
@@ -100,29 +142,20 @@ class ComfyUiP5Helper {
 
   async get_outputs_from_history(prompt_id) {
     try {
-      let res = await fetch(this.base_url + "/history/" + prompt_id);
-      let history = await res.json();
+      const res = await fetch(this._url("/history/" + prompt_id));
+      const text = await res.text();
+      const historyAll = JSON.parse(text);
+      const history = historyAll[prompt_id];
 
-      history = history[prompt_id];
-
-      // flatten resulting images and only use the ones of type 'output':
-      let image_outputs = Object.entries(history.outputs)
-        .filter(([key, value]) => value?.images?.length > 0)
-        .reduce((acc, [key, value]) => {
-          acc[key] = value.images.filter((d) => d.type === "output");
-          return acc;
-        }, {});
+      const image_outputs = Object.entries(history.outputs)
+        .filter(([_, v]) => v?.images?.length > 0)
+        .reduce((acc, [k, v]) => { acc[k] = v.images.filter(d => d.type === "output"); return acc; }, {});
 
       for (const [node_number, images] of Object.entries(image_outputs)) {
         for (const image of images) {
-          const img_encoded = new URLSearchParams(image);
-          const blob_url =
-            this.base_url + "/view?" + encodeURI(img_encoded.toString());
-
-          this.outputs.push({
-            node: parseInt(node_number),
-            src: blob_url,
-          });
+          const params = new URLSearchParams(image).toString();
+          const blob_url = this._url("/view?" + encodeURI(params));
+          this.outputs.push({ node: parseInt(node_number), src: blob_url });
         }
       }
     } catch (e) {
@@ -132,12 +165,11 @@ class ComfyUiP5Helper {
   }
 
   async run(workflow, callback, status_callback) {
-    // stall while we're waiting for the Comfy connection being set up
-    // as well as images being uploaded:
     const delay = (ms) => new Promise((res) => setTimeout(res, ms));
     while (!this.sid || Object.values(this.running_uploads).length > 0) {
       await delay(100);
     }
+    await this.apiReady; // ensure apiPrefix is set before HTTP calls
 
     this.callback = callback;
     this.prompt_id = await this.prompt(workflow, status_callback);
@@ -148,40 +180,38 @@ class ComfyUiP5Helper {
   }
 
   async prompt(workflow, status_callback) {
-    let options = {
+    const options = {
       method: "POST",
       body: JSON.stringify({ prompt: workflow, client_id: this.sid }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
       redirect: "follow",
     };
 
-    try {
-      let res = await fetch(this.base_url + "/prompt", options);
-      let data = await res.json();
-      if (res.status !== 200) {
-        if (data.error) {
-          throw (
-            data.error.type +
-            ": " +
-            data.error.message +
-            " (" +
-            data.error.details +
-            ")"
-          );
-        } else {
-          throw "Status " + res.status;
-        }
+    const url = this._url("/prompt");
+    console.log("[helper] POST", url);
+
+    const res = await fetch(url, options);
+    const text = await res.text();
+    console.log("[helper] /prompt status", res.status, "body:", text.slice(0, 200));
+
+    let data;
+    try { data = text ? JSON.parse(text) : {}; }
+    catch (e) { throw new Error("Non-JSON response from /prompt: " + e.message); }
+
+    if (!res.ok) {
+      if (data?.error) {
+        throw new Error(
+          `${data.error.type}: ${data.error.message} (${data.error.details})`
+        );
+      } else {
+        throw new Error(
+          `HTTP ${res.status}: ${text.slice(0, 200)}`
+        );
       }
-
-      this.running_prompts[data.prompt_id] = { status_callback };
-
-      return data.prompt_id;
-    } catch (e) {
-      console.warn(e);
-      throw e;
     }
+
+    this.running_prompts[data.prompt_id] = { status_callback };
+    return data.prompt_id;
   }
 
   upload_canvas(canvas, filename) {
@@ -198,16 +228,11 @@ class ComfyUiP5Helper {
             redirect: "follow",
           };
 
-          fetch(this.base_url + "/upload/image", options)
-            .then((res) => res.json())
-            .then((json) => {
-              // console.log("Upload response:", json);
-              resolve(json.name);
-            })
-            .catch((err) => {
-              console.warn("Upload failed:", err);
-              reject(err);
-            });
+          fetch(this._url("/upload/image"), options)
+          .then((res) => res.text())
+          .then((t) => JSON.parse(t))
+          .then((json) => resolve(json.name))
+          .catch((err) => { console.warn("Upload failed:", err); reject(err); });
         },
         "image/jpeg",
         0.95

@@ -1,6 +1,6 @@
 # p5.comfyui-helper.js
 
-A library for p5.js which adds support for interacting with ComfyUI, using its API. It provides the following features:
+A library for p5.js which adds support for interacting with ComfyUI (or ComfyUI run on RunComfy), using its API. It provides the following features:
 
 * Submit ComfyUI workflows (saved in API format) from p5.js
 * Modify various aspects of the workflow from within JavaScript
@@ -22,10 +22,7 @@ A library for p5.js which adds support for interacting with ComfyUI, using its A
 
 ## Prerequisites
 
-* [ComfyUI](https://github.com/comfyanonymous/ComfyUI) (tested with v0.4.51)
-* If you are running your own ComfyUI installation:
-    * Make sure to start Comfy with the following arguments: ```--listen 0.0.0.0 --enable-cors-header '*'```
-    * If the site you will be accessing Comfy from uses HTTPS, you will need to provision a certificate, and load it into ComfyUI with ```--tls-keyfile privkey.pem --tls-certfile fullchain.pem```. This is needed if you want to make use of the p5.js web editor.
+* RunComfy Machine
 
 ## Setup
 
@@ -34,6 +31,8 @@ A library for p5.js which adds support for interacting with ComfyUI, using its A
 * Install _comfyui-tooling-nodes_ (available to install via the ComfyUI Manager, or [manually](https://github.com/Acly/comfyui-tooling-nodes?tab=readme-ov-file#installation))
 * Enable _Dev Mode_ in ComfyUI's setting (via the cog icon on the website), for the "Save (API format)" button to show.
 
+![where settings on new runcomfy is located](images/finding_settings_on_runcomfy.png)
+![where dev mode is](images/turn_on_dev_mode.png)
 ## Getting started
 
 Include the following line in the `head` section of your HTML:
@@ -51,11 +50,21 @@ or, download and use a local copy of the [library file](https://github.com/gohai
 
 Create a global variable, and set up the `ComfyUiP5Helper` like so. The only argument is the URL you're using to access ComfyUI (with or without a slash at the end).
 
+
+For every new workflow/RunComfy session, you need to update the XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX server-id since this updates every new work session
+I would recommend setting your runcomfy session to be slightly longer than you anticipate so that you don't need to reset this url each time and wait for the 5 min load up period you can check that your url is correct, past <comfy_url> into your browser and it should display a comfyui
+
 ```
 let comfy;
 
 function setup() {
-  comfy = new ComfyUiP5Helper("https://your.comfyui.instance:8188");
+  # below is an example URL
+  # https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/837eb0c1-c4f9-412a-befa-3921d368c130
+  server_id = "837eb0c1-c4f9-412a-befa-3921d368c130";
+  comfy_url = "https://" + server_id + "-comfyui.runcomfy.com";
+  console.log("comfy url is " + comfy_url);
+  comfy = new ComfyUiP5Helper(comfy_url); 
+}
 ```
 
 #### Loading a workflow
@@ -73,7 +82,15 @@ function preload() {
 }
 ```
 
+##### Notes on loading a workflow:
+- There's no correlation between the workflow in the runcomfy session and the workflow loaded here. I believe we are just using the session to load the workflow we've uploaded here. 
+- Reminder: you can change certain fields in your workflow (random seed, prompt, etc) from p5.js
+- IMPORTANT: this json must be obtained from turning dev mode on and saving the workflow as api format
+
+
 The keys in this object correspond to the _#_ number ComfyUI shows at the top right of each node.
+On RunComfy, we turn on the node numbers via the Lite Graph setting menu and scroll to the Node ID Badge mode and select 'Show All'. See the reference image.
+![Node ID badge](images/turn_on_badge_node.png)
 
 ![example node](doc/example_node.png)
 
@@ -170,3 +187,11 @@ function setup() {
 ```
 
 The `mask()` method can be similarly used wherever the workflow contains a "Load Image (as mask)" node.
+
+
+
+
+#### Credits
+Original library created by Gottfried Haider [original repo](https://github.com/gohai/p5.comfyui-helper)
+
+Additional RunComfy changes made by Lorie Chen during her TA-ship for Golan Levin's Creative Coding 60-212 course at CMU.
