@@ -31,8 +31,9 @@ A library for p5.js which adds support for interacting with ComfyUI (or ComfyUI 
 * Install _comfyui-tooling-nodes_ (available to install via the ComfyUI Manager, or [manually](https://github.com/Acly/comfyui-tooling-nodes?tab=readme-ov-file#installation))
 * Enable _Dev Mode_ in ComfyUI's setting (via the cog icon on the website), for the "Save (API format)" button to show.
 
-![where settings on new runcomfy is located](images/finding_settings_on_runcomfy.png)
-![where dev mode is](images/turn_on_dev_mode.png)
+![where settings on new runcomfy is located](doc/where_settings_runcomfy.png)
+![where dev mode is](doc/where_dev_mode_runcomfy.png)
+
 ## Getting started
 
 Include the following line in the `head` section of your HTML:
@@ -90,7 +91,7 @@ function preload() {
 
 The keys in this object correspond to the _#_ number ComfyUI shows at the top right of each node.
 On RunComfy, we turn on the node numbers via the Lite Graph setting menu and scroll to the Node ID Badge mode and select 'Show All'. See the reference image.
-![Node ID badge](images/turn_on_badge_node.png)
+![Node ID badge](doc/where_node_id_badge_runcomfy.png)
 
 ![example node](doc/example_node.png)
 
@@ -195,3 +196,5 @@ The `mask()` method can be similarly used wherever the workflow contains a "Load
 Original library created by Gottfried Haider [original repo](https://github.com/gohai/p5.comfyui-helper)
 
 Additional RunComfy changes made by Lorie Chen during her TA-ship for Golan Levin's Creative Coding 60-212 course at CMU.
+
+Up to date for RunComfy's ComfyUI feature as of 09.29.2025
