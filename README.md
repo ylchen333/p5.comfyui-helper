@@ -190,6 +190,16 @@ function setup() {
 The `mask()` method can be similarly used wherever the workflow contains a "Load Image (as mask)" node.
 
 
+## Web Templates
+COMING SOON
+*please duplicate the templates*
+### p5.js
+[comfyui-basic on p5.js editor](https://editor.p5js.org/loriechen333/sketches/DM99sXFz6)
+[comfyui-basic on p5.js editor](https://editor.p5js.org/loriechen333/sketches/Ebnim8xcR)
+[comfyui-basic on p5.js editor](https://editor.p5js.org/loriechen333/sketches/LmKeEqXun)
+
+### OpenProcessing (coming soon)
+
 
 
 #### Credits
