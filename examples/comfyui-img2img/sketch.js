@@ -10,13 +10,28 @@ function preload() {
   workflow = loadJSON("workflow_api.json");
 }
 
+function parse_runcomfy_url(url){
+  // example url: 
+  // https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/64c364bd-d7fa-4996-a44f-c08b4c5c02d6
+  // const url = url;
+
+  // 1. Parse the URL
+  const parsedUrl = new URL(url);
+
+  // 2. Split the pathname to get the last segment (server_id)
+  const parts = parsedUrl.pathname.split("/");
+  const server_id = parts.pop(); // "64c364bd-d7fa-4996-a44f-c08b4c5c02d6"
+
+  return server_id
+}
+
 function setup() {
   createCanvas(512, 512);
   pixelDensity(1);
   srcImg = createGraphics(width, height);
 
-  // https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/837eb0c1-c4f9-412a-befa-3921d368c130
-  server_id = "837eb0c1-c4f9-412a-befa-3921d368c130";
+  const url = "https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/15661853-6088-481d-aad6-ba3edfabd376"
+  server_id = parse_runcomfy_url(url);
   comfy_url = "https://" + server_id + "-comfyui.runcomfy.com";
   console.log("comfy url is " + comfy_url);
   comfy = new ComfyUiP5Helper(comfy_url); 

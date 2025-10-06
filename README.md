@@ -53,7 +53,7 @@ Create a global variable, and set up the `ComfyUiP5Helper` like so. The only arg
 
 
 For every new workflow/RunComfy session, you need to update the XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX server-id since this updates every new work session
-I would recommend setting your runcomfy session to be slightly longer than you anticipate so that you don't need to reset this url each time and wait for the 5 min load up period you can check that your url is correct, past <comfy_url> into your browser and it should display a comfyui
+I would recommend setting your runcomfy session to be slightly longer than you anticipate so that you don't need to reset this url each time and wait for the 5 min load up period you can check that your url is correct, past <comfy_url> into your browser and it should display a ComfyUI instance without any RunComfy UI
 
 ```
 let comfy;
@@ -195,8 +195,8 @@ COMING SOON
 *please duplicate the templates*
 ### p5.js
 [comfyui-basic on p5.js editor](https://editor.p5js.org/loriechen333/sketches/DM99sXFz6)
-[comfyui-basic on p5.js editor](https://editor.p5js.org/loriechen333/sketches/Ebnim8xcR)
-[comfyui-basic on p5.js editor](https://editor.p5js.org/loriechen333/sketches/LmKeEqXun)
+WIP [comfyui-img2img on p5.js editor](https://editor.p5js.org/loriechen333/sketches/Ebnim8xcR)
+WIP [comfyui-inpaint on p5.js editor](https://editor.p5js.org/loriechen333/sketches/LmKeEqXun)
 
 ### OpenProcessing (coming soon)
 
