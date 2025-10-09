@@ -86,7 +86,7 @@
   },
   "10": {
     "inputs": {
-      "image": "example.png",
+      "image": "input/p5.comfyui-helper-43c7ec2f-25de-4401-adaa-925cace2aae5.jpg",
       "upload": "image"
     },
     "class_type": "LoadImage",
@@ -112,7 +112,7 @@
   },
   "14": {
     "inputs": {
-      "ckpt_name": "sdxl_lightning_2step.safetensors"
+      "ckpt_name": "v1-5-pruned-emaonly-fp16.safetensors"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {

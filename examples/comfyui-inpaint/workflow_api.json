@@ -86,7 +86,7 @@
   },
   "20": {
     "inputs": {
-      "image": "yosemite_inpaint_example.png",
+      "image": "input/p5.comfyui-helper-8ab9733c-1434-4759-ae9e-1ccae67c658e.png",
       "upload": "image"
     },
     "class_type": "LoadImage",

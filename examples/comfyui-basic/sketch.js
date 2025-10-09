@@ -40,7 +40,7 @@ function parse_runcomfy_url(url){
 function setup() {
   createCanvas(512, 512);
 
-  const url = "https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/15661853-6088-481d-aad6-ba3edfabd376"
+  const url = "https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/97d0223d-c62e-4c27-8844-d406ec40db7d"
   server_id = parse_runcomfy_url(url);
   comfy_url = "https://" + server_id + "-comfyui.runcomfy.com";
   console.log("comfy url is " + comfy_url);

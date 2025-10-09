@@ -8,6 +8,7 @@ let resImg;
 
 function preload() {
   workflow = loadJSON("workflow_api.json");
+  // inputImg = loadImage("/workspace/ComfyUI/input/example.png");
 }
 
 function parse_runcomfy_url(url){
@@ -28,22 +29,30 @@ function parse_runcomfy_url(url){
 function setup() {
   createCanvas(512, 512);
   pixelDensity(1);
+  frameRate(2);
   srcImg = createGraphics(width, height);
 
-  const url = "https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/15661853-6088-481d-aad6-ba3edfabd376"
+  const url = "https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/97d0223d-c62e-4c27-8844-d406ec40db7d"
   server_id = parse_runcomfy_url(url);
   comfy_url = "https://" + server_id + "-comfyui.runcomfy.com";
   console.log("comfy url is " + comfy_url);
   comfy = new ComfyUiP5Helper(comfy_url); 
   console.log("workflow is", workflow);
 
+
   let button = createButton("start generating");
   button.mousePressed(requestImage);
 }
 
-function requestImage() {
-  // replace the LoadImage node with our source image
-  workflow[10] = comfy.image(srcImg);
+async function requestImage() {
+  // Node 10 in this workflow is LoadImage
+  const uploaded = await comfy.image(srcImg);
+  workflow["10"].inputs.image = uploaded;
+
+  if (!workflow["10"]) {
+    console.error("❌ Node 10 not found in workflow!");
+    return;
+  }
   // replace the prompt
   workflow[6].inputs.text = "idylic beach scene with a white volleyball";
   // randomize the seed
@@ -73,7 +82,7 @@ function draw() {
   srcImg.rect(0, height / 2, width, height / 2);
   srcImg.fill(255); // volleyball
   srcImg.noStroke();
-  srcImg.ellipse(mouseX, mouseY, 150, 150);
+  srcImg.ellipse(width / 2, 2*height/3, 150, 150);
 
   background(255);
   image(srcImg, 0, 0);
