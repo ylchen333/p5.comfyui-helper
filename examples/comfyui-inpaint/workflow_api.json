@@ -86,7 +86,7 @@
   },
   "20": {
     "inputs": {
-      "image": "input/p5.comfyui-helper-8ab9733c-1434-4759-ae9e-1ccae67c658e.png",
+      "image": "input/example.png",
       "upload": "image"
     },
     "class_type": "LoadImage",
@@ -117,7 +117,7 @@
   },
   "29": {
     "inputs": {
-      "ckpt_name": "512-inpainting-ema.safetensors"
+      "ckpt_name": "juggernautXL_versionXInpaint.safetensors" 
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {

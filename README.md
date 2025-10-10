@@ -34,6 +34,18 @@ A library for p5.js which adds support for interacting with ComfyUI (or ComfyUI 
 ![where settings on new runcomfy is located](doc/where_settings_runcomfy.png)
 ![where dev mode is](doc/where_dev_mode_runcomfy.png)
 
+To make some later steps easier, we will change our ComfyUI to the following:
+
+On RunComfy, we turn on the node numbers via the Lite Graph setting menu and scroll to the Node ID Badge mode and select 'Show All'. See the reference image.
+![Node ID badge](doc/where_node_id_badge_runcomfy.png)
+
+![example node](doc/example_node.png)
+
+
+We can also change the dashboard/setup of the ComfyUI instance by changing the "Use new menu" under Menu in Settings to "Disable".
+![change ComfyUI UI](doc/new_runcomfy_change_menu.png)
+
+
 ## Getting started
 
 Include the following line in the `head` section of your HTML:
@@ -82,6 +94,9 @@ function preload() {
   console.log("workflow is", workflow);
 }
 ```
+![save api workflow from new runcomfy, look at export API](doc/new_comfyui_api.png)
+![save api workflow from old runcomfy, look at Save (API format)](doc/old_comfyui_api.png)
+
 
 ##### Notes on loading a workflow:
 - There's no correlation between the workflow in the runcomfy session and the workflow loaded here. I believe we are just using the session to load the workflow we've uploaded here. 
@@ -90,10 +105,6 @@ function preload() {
 
 
 The keys in this object correspond to the _#_ number ComfyUI shows at the top right of each node.
-On RunComfy, we turn on the node numbers via the Lite Graph setting menu and scroll to the Node ID Badge mode and select 'Show All'. See the reference image.
-![Node ID badge](doc/where_node_id_badge_runcomfy.png)
-
-![example node](doc/example_node.png)
 
 E.g. to change the seed of this KSampler node from within JavaScript, we'd do:
 
@@ -193,13 +204,25 @@ The `mask()` method can be similarly used wherever the workflow contains a "Load
 ## Web Templates
 COMING SOON
 *please duplicate the templates*
-### p5.js
+
+#### p5.js
 [comfyui-basic on p5.js editor](https://editor.p5js.org/loriechen333/sketches/DM99sXFz6)
-WIP [comfyui-img2img on p5.js editor](https://editor.p5js.org/loriechen333/sketches/Ebnim8xcR)
-WIP [comfyui-inpaint on p5.js editor](https://editor.p5js.org/loriechen333/sketches/LmKeEqXun)
+[comfyui-img2img on p5.js editor](https://editor.p5js.org/loriechen333/sketches/LmKeEqXun)
+WIP [comfyui-inpaint on p5.js editor](https://editor.p5js.org/loriechen333/sketches/)
 
-### OpenProcessing (coming soon)
+#### OpenProcessing 
+COMING SOON
 
+### Debugging
+If you hit something like the follow (i.e. you see ```value_not_in_list\```)
+
+```[Log] [helper] POST – "https://286796ce-c7d8-4278-9b36-8930e87469f8-comfyui.runcomfy.com/prompt" (p5.comfyui-helper.js, line 191)
+[Error] Failed to load resource: the server responded with a status of 400 () (prompt, line 0)
+[Log] [helper] /prompt status – 400 – "body:" (p5.comfyui-helper.js, line 195)
+"{\"error\": {\"type\": \"prompt_outputs_failed_validation\", \"message\": \"Prompt outputs failed validation\", \"details\": \"\", \"extra_info\": {}}, \"node_errors\": {\"14\": {\"errors\": [{\"type\": \"value_not_in_list\", "
+[Error] Unhandled Promise Rejection: Error: prompt_outputs_failed_validation: Prompt outputs failed validation ()
+	(anonymous function) (p5.comfyui-helper.js:175)
+```
 
 
 #### Credits

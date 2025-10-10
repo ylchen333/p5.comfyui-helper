@@ -43,9 +43,15 @@ function setup() {
   button.mousePressed(requestImage);
 }
 
-function requestImage() {
+async function requestImage() {
   // replace the LoadImage node with our source image
-  workflow[20] = comfy.image(srcImg);
+  const uploaded = await comfy.image(srcImg);
+  workflow["20"].inputs.image = uploaded;
+
+  if (!workflow["20"]) {
+    console.error("❌ Node 20 not found in workflow!");
+    return;
+  }
   // update the seed
   workflow[3].inputs.seed = workflow[3].inputs.seed + 1;
   // reduce the number of steps (to make it faster)

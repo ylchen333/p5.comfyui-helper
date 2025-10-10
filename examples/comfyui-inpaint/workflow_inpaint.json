@@ -1,14 +1,14 @@
 {
   "3": {
     "inputs": {
-      "seed": 716447605368186,
-      "steps": 2,
-      "cfg": 1,
+      "seed": 156680208700286,
+      "steps": 20,
+      "cfg": 8,
       "sampler_name": "euler",
-      "scheduler": "sgm_uniform",
+      "scheduler": "normal",
       "denoise": 1,
       "model": [
-        "14",
+        "4",
         0
       ],
       "positive": [
@@ -20,7 +20,7 @@
         0
       ],
       "latent_image": [
-        "12",
+        "5",
         0
       ]
     },
@@ -29,11 +29,31 @@
       "title": "KSampler"
     }
   },
+  "4": {
+    "inputs": {
+      "ckpt_name": "juggernautXL_versionXInpaint.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "5": {
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
+    }
+  },
   "6": {
     "inputs": {
-      "text": "photograph of victorian woman with wings, sky clouds, meadow grass\n",
+      "text": "beautiful scenery nature glass bottle landscape, , purple galaxy bottle,",
       "clip": [
-        "14",
+        "4",
         1
       ]
     },
@@ -44,9 +64,9 @@
   },
   "7": {
     "inputs": {
-      "text": "watermark, text\n",
+      "text": "text, watermark",
       "clip": [
-        "14",
+        "4",
         1
       ]
     },
@@ -62,7 +82,7 @@
         0
       ],
       "vae": [
-        "14",
+        "4",
         2
       ]
     },
@@ -82,41 +102,6 @@
     "class_type": "SaveImage",
     "_meta": {
       "title": "Save Image"
-    }
-  },
-  "10": {
-    "inputs": {
-      "image": "input/example.png",
-      "upload": "image"
-    },
-    "class_type": "LoadImage",
-    "_meta": {
-      "title": "Load Image"
-    }
-  },
-  "12": {
-    "inputs": {
-      "pixels": [
-        "10",
-        0
-      ],
-      "vae": [
-        "14",
-        2
-      ]
-    },
-    "class_type": "VAEEncode",
-    "_meta": {
-      "title": "VAE Encode"
-    }
-  },
-  "14": {
-    "inputs": {
-      "ckpt_name": "v1-5-pruned-emaonly-fp16.safetensors"
-    },
-    "class_type": "CheckpointLoaderSimple",
-    "_meta": {
-      "title": "Load Checkpoint"
     }
   }
 }
