@@ -99,7 +99,7 @@ function preload() {
 
 
 ##### Notes on loading a workflow:
-- There's no correlation between the workflow in the runcomfy session and the workflow loaded here. I believe we are just using the session to load the workflow we've uploaded here. 
+- There's no correlation between the workflow in the runcomfy session and the workflow loaded here. I believe we are just using the session to load the workflow we've uploaded here. HOWEVER, the assets you call from the p5 workflow must be referencing assets availible on your machine (i.e. models and images must respect the file path system on RunComfy)
 - Reminder: you can change certain fields in your workflow (random seed, prompt, etc) from p5.js
 - IMPORTANT: this json must be obtained from turning dev mode on and saving the workflow as api format
 
