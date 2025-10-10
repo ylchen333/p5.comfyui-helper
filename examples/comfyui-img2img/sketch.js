@@ -8,7 +8,6 @@ let resImg;
 
 function preload() {
   workflow = loadJSON("workflow_api.json");
-  // inputImg = loadImage("/workspace/ComfyUI/input/example.png");
 }
 
 function parse_runcomfy_url(url){

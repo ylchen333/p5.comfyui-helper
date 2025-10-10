@@ -203,9 +203,11 @@ COMING SOON
 *please duplicate the templates*
 
 #### p5.js
-[comfyui-basic on p5.js editor](https://editor.p5js.org/loriechen333/sketches/DM99sXFz6)
-[comfyui-img2img on p5.js editor](https://editor.p5js.org/loriechen333/sketches/LmKeEqXun)
-WIP [comfyui-inpaint on p5.js editor](https://editor.p5js.org/loriechen333/sketches/)
+[comfyui-basic on p5.js editor](https://editor.p5js.org/loriechen333/sketches/DM99sXFz6)<br>
+
+[comfyui-img2img on p5.js editor](https://editor.p5js.org/loriechen333/sketches/LmKeEqXun)<br>
+
+WIP [comfyui-inpaint on p5.js editor](https://editor.p5js.org/loriechen333/sketches/)<br>
 
 Note: for the inpainting example, its imperative that you have installed stable diffusion 512-inpainting-ema.safetensors
 onto your RunComfy Assests library. After doing so, you'll need to restart then reboot your ComfyUI server.
@@ -216,7 +218,7 @@ onto your RunComfy Assests library. After doing so, you'll need to restart then 
 COMING SOON
 
 ### Debugging
-If you hit something like the follow (i.e. you see ```value_not_in_list\```)
+If you hit something like the follow (i.e. you see ```value_not_in_list\```), this likely means that you are referencing something on the ComfyUI server that doesn't exist there. In this case, double check that you are sending a asset to the ComfyUI server before you reference it (during ```workflow['10'] = <image_path>)``` etc)
 
 ```[Log] [helper] POST – "https://286796ce-c7d8-4278-9b36-8930e87469f8-comfyui.runcomfy.com/prompt" (p5.comfyui-helper.js, line 191)
 [Error] Failed to load resource: the server responded with a status of 400 () (prompt, line 0)
