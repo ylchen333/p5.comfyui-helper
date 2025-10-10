@@ -234,7 +234,7 @@ class ComfyUiP5Helper {
           .then((json) => resolve(json.name))
           .catch((err) => { console.warn("Upload failed:", err); reject(err); });
         },
-        "image/jpeg",
+        "image/png",
         0.95
       );
     });

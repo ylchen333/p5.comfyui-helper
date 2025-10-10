@@ -20,7 +20,7 @@
         0
       ],
       "latent_image": [
-        "26",
+        "27",
         0
       ]
     },
@@ -94,6 +94,14 @@
       "title": "Load Image"
     }
   },
+  "21": {
+    "inputs": {
+      "image": "input/your_mask_image.jpg",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": { "title": "Load Mask" }
+  },
   "26": {
     "inputs": {
       "grow_mask_by": 6,
@@ -106,8 +114,8 @@
         2
       ],
       "mask": [
-        "20",
-        1
+        "21",
+        0
       ]
     },
     "class_type": "VAEEncodeForInpaint",
@@ -115,9 +123,17 @@
       "title": "VAE Encode (for Inpainting)"
     }
   },
+  "27": {
+    "inputs": {
+      "samples": ["26", 0],
+      "mask": ["26", 1]
+    },
+    "class_type": "LatentComposite",
+    "_meta": { "title": "Latent Composite" }
+  },
   "29": {
     "inputs": {
-      "ckpt_name": "juggernautXL_versionXInpaint.safetensors" 
+      "ckpt_name": "SD2.1/v2-1_512-ema-pruned.safetensors" 
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {

@@ -2,11 +2,11 @@
   "3": {
     "inputs": {
       "seed": 716447605368186,
-      "steps": 2,
-      "cfg": 1,
+      "steps": 25,
+      "cfg": 8,
       "sampler_name": "euler",
-      "scheduler": "sgm_uniform",
-      "denoise": 1,
+      "scheduler": "normal",
+      "denoise": 1.0,
       "model": [
         "14",
         0

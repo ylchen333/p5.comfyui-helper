@@ -1,14 +1,14 @@
 {
   "3": {
     "inputs": {
-      "seed": 156680208700286,
+      "seed": 404221057349038,
       "steps": 20,
       "cfg": 8,
-      "sampler_name": "euler",
+      "sampler_name": "uni_pc_bh2",
       "scheduler": "normal",
       "denoise": 1,
       "model": [
-        "4",
+        "29",
         0
       ],
       "positive": [
@@ -20,7 +20,7 @@
         0
       ],
       "latent_image": [
-        "5",
+        "26",
         0
       ]
     },
@@ -29,31 +29,11 @@
       "title": "KSampler"
     }
   },
-  "4": {
-    "inputs": {
-      "ckpt_name": "juggernautXL_versionXInpaint.safetensors"
-    },
-    "class_type": "CheckpointLoaderSimple",
-    "_meta": {
-      "title": "Load Checkpoint"
-    }
-  },
-  "5": {
-    "inputs": {
-      "width": 512,
-      "height": 512,
-      "batch_size": 1
-    },
-    "class_type": "EmptyLatentImage",
-    "_meta": {
-      "title": "Empty Latent Image"
-    }
-  },
   "6": {
     "inputs": {
-      "text": "beautiful scenery nature glass bottle landscape, , purple galaxy bottle,",
+      "text": "closeup photograph of maine coon (cat:1.2) in the yosemite national park mountains nature",
       "clip": [
-        "4",
+        "29",
         1
       ]
     },
@@ -64,9 +44,9 @@
   },
   "7": {
     "inputs": {
-      "text": "text, watermark",
+      "text": "watermark, text\n",
       "clip": [
-        "4",
+        "29",
         1
       ]
     },
@@ -82,7 +62,7 @@
         0
       ],
       "vae": [
-        "4",
+        "29",
         2
       ]
     },
@@ -102,6 +82,46 @@
     "class_type": "SaveImage",
     "_meta": {
       "title": "Save Image"
+    }
+  },
+  "20": {
+    "inputs": {
+      "image": "input/yosemite_inpaint_example.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "26": {
+    "inputs": {
+      "grow_mask_by": 6,
+      "pixels": [
+        "20",
+        0
+      ],
+      "vae": [
+        "29",
+        2
+      ],
+      "mask": [
+        "20",
+        1
+      ]
+    },
+    "class_type": "VAEEncodeForInpaint",
+    "_meta": {
+      "title": "VAE Encode (for Inpainting)"
+    }
+  },
+  "29": {
+    "inputs": {
+      "ckpt_name": "SD2.1/v2-1_512-ema-pruned.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
     }
   }
 }

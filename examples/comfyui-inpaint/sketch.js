@@ -5,10 +5,11 @@ let workflow;
 let comfy;
 let bg;
 let srcImg;
+let maskGraphics;
 let resImg;
 
 function preload() {
-  workflow = loadJSON("workflow_api.json");
+  workflow = loadJSON("workflow_inpaint_comfyui.json");
   bg = loadImage("yosemite.jpg");
 }
 
@@ -31,8 +32,11 @@ function setup() {
   createCanvas(1024, 683);
   pixelDensity(1);
   srcImg = createGraphics(width, height);
+  maskGraphics = createGraphics(width, height); 
+  srcImg.clear();
+  maskGraphics.background(0);
 
-  const url = "https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/97d0223d-c62e-4c27-8844-d406ec40db7d"
+  const url = "https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/e333cc10-3136-43dc-ac8e-d1b8e6294aa2"
   server_id = parse_runcomfy_url(url);
   comfy_url = "https://" + server_id + "-comfyui.runcomfy.com";
   console.log("comfy url is " + comfy_url);
@@ -52,6 +56,8 @@ async function requestImage() {
     console.error("❌ Node 20 not found in workflow!");
     return;
   }
+
+  workflow[6].inputs.text = "closeup photograph of maine coon (cat:1.2)";
   // update the seed
   workflow[3].inputs.seed = workflow[3].inputs.seed + 1;
   // reduce the number of steps (to make it faster)
@@ -73,30 +79,40 @@ function gotImage(results, err) {
   requestImage();
 }
 
-function draw() {
-  // draw a scene into the source image to use for generation
-  srcImg.image(bg, 0, 0);
-  // burn a "hole" into the image
-  srcImg.erase();
-  srcImg.circle(mouseX, mouseY, 200);
-  srcImg.noErase();
 
+function draw() {
+  // draw a scene into the source image
+  srcImg.image(bg, 0, 0);
+
+  // burn a "hole" with the mouse into the source image
+  if (mouseIsPressed) {
+    srcImg.erase();
+    srcImg.circle(mouseX, mouseY, 100);
+    srcImg.noErase();
+
+    // draw the same circle in the mask (white = area to paint)
+    maskGraphics.noStroke();
+    maskGraphics.fill(255);
+    maskGraphics.circle(mouseX, mouseY, 100);
+  }
+
+  // draw checkerboard background
   background(255);
-  // checkerboard pattern (decoration)
   for (let y = 0; y < height; y += 10) {
     for (let x = 0; x < width; x += 10) {
       noStroke();
-      if ((x + y) / 10 % 2 === 0) {
-        fill(255);
-      } else {
-        fill(204);
-      }
+      fill(((x + y) / 10) % 2 === 0 ? 255 : 204);
       rect(x, y, 10, 10);
     }
   }
-  image(srcImg, 0, 0);
 
-  //if we have an image, put it onto the canvas
+  // preview: overlay erased source and its mask
+  image(srcImg, 0, 0);
+  tint(255, 127); // semi-transparent
+  image(maskGraphics, 0, 0);
+  noTint();
+
+  // draw result if we have one
   if (resImg) {
     image(resImg, 0, 0, width, height);
   }

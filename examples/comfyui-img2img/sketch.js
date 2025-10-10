@@ -32,7 +32,7 @@ function setup() {
   frameRate(2);
   srcImg = createGraphics(width, height);
 
-  const url = "https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/97d0223d-c62e-4c27-8844-d406ec40db7d"
+  const url = "https://www.runcomfy.com/comfyui/89e60215-b0a1-4795-8437-e2743cddc806/servers/e333cc10-3136-43dc-ac8e-d1b8e6294aa2"
   server_id = parse_runcomfy_url(url);
   comfy_url = "https://" + server_id + "-comfyui.runcomfy.com";
   console.log("comfy url is " + comfy_url);
@@ -82,7 +82,7 @@ function draw() {
   srcImg.rect(0, height / 2, width, height / 2);
   srcImg.fill(255); // volleyball
   srcImg.noStroke();
-  srcImg.ellipse(width / 2, 2*height/3, 150, 150);
+  srcImg.ellipse(width / 2, height/3, 150, 150);
 
   background(255);
   image(srcImg, 0, 0);

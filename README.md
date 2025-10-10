@@ -210,6 +210,11 @@ COMING SOON
 [comfyui-img2img on p5.js editor](https://editor.p5js.org/loriechen333/sketches/LmKeEqXun)
 WIP [comfyui-inpaint on p5.js editor](https://editor.p5js.org/loriechen333/sketches/)
 
+Note: for the inpainting example, its imperative that you have installed stable diffusion 512-inpainting-ema.safetensors
+onto your RunComfy Assests library. After doing so, you'll need to restart then reboot your ComfyUI server.
+
+![inpaint model loading](doc/inpainting_model_loading.png)
+
 #### OpenProcessing 
 COMING SOON
 
