@@ -97,13 +97,6 @@ function preload() {
 ![save api workflow from new runcomfy, look at export API](doc/new_comfyui_api.png)
 ![save api workflow from old runcomfy, look at Save (API format)](doc/old_comfyui_api.png)
 
-
-##### Notes on loading a workflow:
-- There's no correlation between the workflow in the runcomfy session and the workflow loaded here. I believe we are just using the session to load the workflow we've uploaded here. HOWEVER, the assets you call from the p5 workflow must be referencing assets availible on your machine (i.e. models and images must respect the file path system on RunComfy)
-- Reminder: you can change certain fields in your workflow (random seed, prompt, etc) from p5.js
-- IMPORTANT: this json must be obtained from turning dev mode on and saving the workflow as api format
-
-
 The keys in this object correspond to the _#_ number ComfyUI shows at the top right of each node.
 
 E.g. to change the seed of this KSampler node from within JavaScript, we'd do:
@@ -111,7 +104,11 @@ E.g. to change the seed of this KSampler node from within JavaScript, we'd do:
 ```
 workflow[3].inputs.seed = random(999999);
 ```
-
+##### Notes on loading a workflow:
+- There's no correlation between the workflow in the runcomfy session and the workflow loaded here. I believe we are just using the session to load the workflow we've uploaded here. HOWEVER, the assets you call from the p5 workflow must be referencing assets availible on your machine (i.e. models and images must respect the file path system on RunComfy)
+- Reminder: you can change certain fields in your workflow (random seed, prompt, etc) from p5.js
+- IMPORTANT: this json must be obtained from turning dev mode on and saving the workflow as api format
+ 
 #### Running a workflow
 
 Submitting a workflow to ComfyUI's queue is as easy as calling its `run` method.
